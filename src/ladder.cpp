@@ -7,6 +7,13 @@
 
 using namespace std;
 
+int my_abs(int l1){
+    if(l1 < 0){
+        l1 *= -1;
+    }
+    return l1;
+}
+
 void error(string word1, string word2, string msg){
     cout << "ERROR!!! - " << word1 << " " << word2 << " " << msg << endl;
 }
@@ -14,7 +21,7 @@ void error(string word1, string word2, string msg){
 bool edit_distance_within(const std::string& str1, const std::string& str2, int d){
     int first_length = str1.size();
     int second_length = str2.size();
-    int length_diff = abs(first_length - second_length);
+    int length_diff = my_abs(first_length - second_length);
     if(length_diff > d){ // length is more than allowed diff so false right away
         return false;
     }
@@ -46,7 +53,7 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
         // reaching here, it's possible the difference is extra letters at the end of the longer string
         // but the while loop kicks us out once we reach the end of the shorter string
         // so we add the difference between the last second_index and the size of the longer string
-        total_diff += abs((longer.size() - 1) - second_index)
+        total_diff += my_abs((longer.size() - 1) - second_index);
         return total_diff <= d;
     }
     else{ // reaching this means the lengths are the same
@@ -80,7 +87,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         vector<string> ladder = ladder_queue.front();
         ladder_queue.pop();
         string last_word = ladder.back();
-        for(string& word : word_list){
+        for(const string& word : word_list){
             if(is_adjacent(last_word, word) && visited.find(word) == visited.end()){
                 visited.insert(word);
                 vector<string> new_ladder{ladder};
@@ -119,6 +126,7 @@ void print_word_ladder(const vector<string>& ladder){
     cout << endl;
 }
 
+#define my_assert(e) {cout << #e << ((e) ? " passed": " failed") << endl;}
 void verify_word_ladder(){
     set<string> word_list;
 
@@ -136,3 +144,4 @@ void verify_word_ladder(){
 
     my_assert(generate_word_ladder("car", "cheat", word_list).size() == 4);
 }
+
