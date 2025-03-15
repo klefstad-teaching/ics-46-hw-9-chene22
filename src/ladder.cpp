@@ -23,6 +23,7 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
     int second_length = str2.size();
     int length_diff = my_abs(first_length - second_length);
     if(length_diff > d){ // length is more than allowed diff so false right away
+        //cout << "length diff " << length_diff << " is greater than d, returning false" << endl;
         return false;
     }
     else if(length_diff > 0){ // length differs but within d threshold, so check how many differences there are
@@ -37,13 +38,16 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
             char first_char = tolower(shorter[first_index]);
             char second_char = tolower(longer[second_index]);
 
+            //cout << "first index: " << first_index << "; second index: " << second_index << "; chars: " << first_char << " " << second_char << endl;
             if(first_char == second_char){
                 first_index++;
                 second_index++;
             }
             else{
                 ++total_diff;
+                //cout << first_char << " is different than " << second_char << " so total_diff is now " << total_diff << endl;
                 if(total_diff > d){
+                    //cout << "total diff " << total_diff << " is greater than d, returning false" << endl;
                     return false;
                 }
                 ++second_index;
@@ -53,7 +57,12 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
         // reaching here, it's possible the difference is extra letters at the end of the longer string
         // but the while loop kicks us out once we reach the end of the shorter string
         // so we add the difference between the last second_index and the size of the longer string
-        total_diff += my_abs((longer.size() - 1) - second_index);
+        //cout << "total_diff before accounting for final my_abs is " << total_diff << endl;
+        //cout << "taking the abs of longer.size(): " << longer.size() << " minus 1 minus index " << second_index << endl;
+        int trailing_offset = my_abs(longer.size() - second_index);
+        //cout << "trailing offset is " << trailing_offset << endl;
+        total_diff += trailing_offset;
+        //cout << "total_diff at the end is now " << total_diff << ". returning total_diff less or equal to d" << endl;
         return total_diff <= d;
     }
     else{ // reaching this means the lengths are the same
@@ -65,10 +74,12 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
             if(first_char != second_char){
                 char_diff++;
                 if(char_diff > d){
+                    //cout << "char_diff " << char_diff << " is greater than d, returning false" << endl;
                     return false;
                 }
             }
         }
+        //cout << "char diff is now " << char_diff << " at the end. returning char_diff less or equal to d" << endl;
         return char_diff <= d;
     }
 }
@@ -117,10 +128,14 @@ void load_words(set<string> & word_list, const string& file_name){
 }
 
 void print_word_ladder(const vector<string>& ladder){
+    if(ladder.size() <= 0){
+        cout << "No word ladder found.";
+    }
+
     for(size_t i = 0; i < ladder.size(); ++i){
         cout << ladder[i];
         if(i < ladder.size() - 1){
-            cout << "->";
+            cout << " ";
         }
     }
     cout << endl;
